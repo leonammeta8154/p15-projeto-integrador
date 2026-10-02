@@ -63,12 +63,15 @@ _MAPA_ROTULOS = {
 }
 
 
-def ler_sidra(caminho: Path) -> pd.DataFrame:
+def ler_sidra(caminho: Path, converter: bool = True) -> pd.DataFrame:
     """Lê um JSON bruto da API SIDRA (com cabeçalho) e devolve um DataFrame.
 
     O primeiro registro do JSON é o cabeçalho, que diz o que é cada campo
     (D1C, D1N...). Usamos esse cabeçalho para nomear as colunas, então o
     código não depende da ordem das dimensões na URL.
+
+    converter=False mantém o campo "valor" como texto original (ex.: "-",
+    "...", "X"), que é como ele vai para a staging.
     """
     registros = ler_json(caminho)
     if not registros:
@@ -85,7 +88,8 @@ def ler_sidra(caminho: Path) -> pd.DataFrame:
         else:
             novos_nomes[rotulo] = "categoria"
     df = df.rename(columns=novos_nomes)
-    df["valor"] = df["valor"].map(converter_valor_sidra)
+    if converter:
+        df["valor"] = df["valor"].map(converter_valor_sidra)
     return df
 
 

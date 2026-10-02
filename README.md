@@ -58,20 +58,93 @@ p15-projeto-integrador/
 ├── data/
 │   ├── raw/              # dados brutos, exatamente como recebidos
 │   └── processed/        # dados tratados pelo ETL
-├── sql/                  # criação do banco (Etapa 2)
+├── sql/
+│   ├── 01_estrutura.sql            # Etapa 2: schemas, tabelas, chaves e índices
+│   └── 02_verificacao_staging.sql  # Etapa 2: consultas de verificação
 ├── src/
 │   ├── config.py         # escopo, parâmetros e caminhos
 │   ├── utils.py          # leitura dos formatos do IBGE
+│   ├── db.py             # conexão com o PostgreSQL (lê o .env)
 │   ├── extract.py        # Etapa 1: coleta das fontes públicas
-│   └── gerar_vendas.py   # Etapa 1: geração da fonte de vendas simulada
+│   ├── gerar_vendas.py   # Etapa 1: geração da fonte de vendas simulada
+│   ├── setup_db.py       # Etapa 2: cria o banco e a estrutura
+│   └── load_staging.py   # Etapa 2: carrega data/raw na staging
 ├── notebooks/            # análise exploratória e notebook final
 ├── models/               # modelo treinado
 └── reports/              # métricas e resultados
 ```
 
+## Modelagem no PostgreSQL
+
+O banco `bioeconomia` tem duas camadas, uma por schema:
+
+| Schema | Papel | Características |
+|--------|-------|----------------|
+| `staging` | Recebe os dados brutos das 4 fontes | Tudo em `TEXT`, sem restrições: guarda o dado exatamente como chegou, inclusive os símbolos do IBGE (`-`, `...`, `X`) e os erros das vendas. Cada linha registra o arquivo de origem e o horário da carga. |
+| `dw` | Modelo dimensional (estrela) tratado pelo ETL | Tipos corretos, chaves primárias e estrangeiras, `CHECK` de valores válidos e índices. |
+
+Separar as camadas permite reprocessar o ETL sem baixar os dados de novo e auditar qualquer valor tratado comparando com o original na staging.
+
+### Modelo dimensional (schema `dw`)
+
+```mermaid
+erDiagram
+    dim_municipio ||--o{ fato_vendas : "cod_ibge"
+    dim_produto   ||--o{ fato_vendas : "id_produto"
+    dim_tempo     ||--o{ fato_vendas : "id_tempo"
+    dim_municipio ||--o{ fato_producao_extrativa : "cod_ibge"
+    dim_produto   ||--o{ fato_producao_extrativa : "id_produto"
+
+    dim_municipio {
+        int cod_ibge PK
+        varchar municipio
+        char uf
+        varchar regiao_intermediaria
+        varchar regiao_imediata
+        int populacao_2022
+    }
+    dim_produto {
+        smallint id_produto PK
+        varchar chave
+        varchar nome
+        varchar unidade_venda
+    }
+    dim_tempo {
+        int id_tempo PK "AAAAMM"
+        date data_referencia
+        smallint ano
+        smallint mes
+        smallint trimestre
+        varchar nome_mes
+    }
+    fato_vendas {
+        int cod_ibge PK, FK
+        smallint id_produto PK, FK
+        int id_tempo PK, FK
+        numeric quantidade
+        numeric preco_unitario
+        numeric receita
+    }
+    fato_producao_extrativa {
+        int cod_ibge PK, FK
+        smallint id_produto PK, FK
+        smallint ano PK
+        numeric quantidade_produzida
+        varchar unidade_producao
+        numeric valor_producao_mil_reais
+    }
+```
+
+Decisões de modelagem:
+
+- **Duas tabelas fato com dimensões compartilhadas:** vendas (mensal) e produção extrativa (anual) têm granularidades diferentes, então ficam em fatos separados ligados pelas mesmas dimensões de município e produto.
+- **Chave primária composta na `fato_vendas`** (município, produto, mês): garante no próprio banco que não existe venda duplicada para a mesma combinação.
+- **`id_tempo` no formato AAAAMM:** legível e ordenável (ex.: `202410`).
+- **`NULL` na produção extrativa significa "dado não disponível no IBGE"**, diferente de zero (símbolo `-` do SIDRA).
+
 ## Como executar
 
-Pré-requisitos: Python 3.10+ e Git. O PostgreSQL será necessário a partir da Etapa 2.
+Pré-requisitos: Python 3.10+, Git e PostgreSQL (testado nas versões 16 e 18).
 
 No Windows (PowerShell), dentro da pasta do projeto:
 
@@ -83,14 +156,27 @@ pip install -r requirements.txt
 # Etapa 1: coleta
 python -m src.extract          # baixa as fontes do IBGE para data/raw
 python -m src.gerar_vendas     # gera data/raw/vendas_simuladas.csv
+
+# Etapa 2: banco de dados
+copy .env.example .env         # depois edite o .env com a senha do PostgreSQL
+python -m src.setup_db         # cria o banco bioeconomia e as tabelas
+python -m src.load_staging     # carrega data/raw na staging
 ```
 
-Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`.
+Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`. Para recriar as tabelas do zero, use `python -m src.setup_db --recriar`.
+
+Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
+
+```
+\! chcp 65001
+\cd 'C:/p15-projeto-integrador'
+\i sql/02_verificacao_staging.sql
+```
 
 ## Andamento
 
 - [x] Etapa 1: estrutura do repositório e coleta de dados (2+ fontes)
-- [ ] Etapa 2: modelagem no PostgreSQL e carga dos dados brutos (staging)
+- [x] Etapa 2: modelagem no PostgreSQL e carga dos dados brutos (staging)
 - [ ] Etapa 3: ETL em Python (staging → modelo dimensional)
 - [ ] Etapa 4: análise exploratória (notebook)
 - [ ] Etapa 5: engenharia de features
