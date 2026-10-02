@@ -130,6 +130,19 @@ CREATE TABLE IF NOT EXISTS dw.fato_vendas (
 );
 COMMENT ON TABLE dw.fato_vendas IS 'Vendas mensais tratadas: uma linha por município, produto e mês.';
 
+-- -----------------------------------------------------------------------------
+-- Auditoria do ETL: o que cada execução corrigiu ou descartou (não é apagada
+-- entre execuções, formando um histórico)
+-- -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS dw.log_qualidade_etl (
+    id_log        SERIAL       PRIMARY KEY,
+    executado_em  TIMESTAMPTZ  NOT NULL,
+    tabela        VARCHAR(40)  NOT NULL,
+    regra         VARCHAR(200) NOT NULL,
+    registros     INTEGER      NOT NULL
+);
+COMMENT ON TABLE dw.log_qualidade_etl IS 'Relatório de qualidade de cada execução do ETL.';
+
 CREATE INDEX IF NOT EXISTS ix_fato_vendas_tempo   ON dw.fato_vendas (id_tempo);
 CREATE INDEX IF NOT EXISTS ix_fato_vendas_produto ON dw.fato_vendas (id_produto);
 CREATE INDEX IF NOT EXISTS ix_fato_producao_ano   ON dw.fato_producao_extrativa (ano);

@@ -1,0 +1,223 @@
+cod_ibge,municipio,uf,regiao_intermediaria,regiao_imediata,populacao_2022
+1300029,Alvarães,AM,Tefé,Tefé,15866
+1300060,Amaturá,AM,Tefé,Tabatinga,10819
+1300086,Anamã,AM,Manaus,Manacapuru,9962
+1300102,Anori,AM,Manaus,Coari,17194
+1300144,Apuí,AM,Lábrea,Manicoré,20647
+1300201,Atalaia do Norte,AM,Tefé,Tabatinga,15314
+1300300,Autazes,AM,Manaus,Manaus,41564
+1300409,Barcelos,AM,Manaus,São Gabriel da Cachoeira,18834
+1300508,Barreirinha,AM,Parintins,Parintins,31051
+1300607,Benjamin Constant,AM,Tefé,Tabatinga,37648
+1300631,Beruri,AM,Manaus,Coari,20718
+1300680,Boa Vista do Ramos,AM,Parintins,Parintins,23785
+1300706,Boca do Acre,AM,Lábrea,Lábrea,35447
+1300805,Borba,AM,Manaus,Manaus,33080
+1300839,Caapiranga,AM,Manaus,Manacapuru,13469
+1300904,Canutama,AM,Lábrea,Lábrea,16869
+1301001,Carauari,AM,Tefé,Tefé,28742
+1301100,Careiro,AM,Manaus,Manaus,30792
+1301159,Careiro da Várzea,AM,Manaus,Manaus,19637
+1301209,Coari,AM,Manaus,Coari,70616
+1301308,Codajás,AM,Manaus,Coari,23549
+1301407,Eirunepé,AM,Tefé,Eirunepé,33170
+1301506,Envira,AM,Tefé,Eirunepé,17186
+1301605,Fonte Boa,AM,Tefé,Tefé,25871
+1301654,Guajará,AM,Tefé,Eirunepé,13815
+1301704,Humaitá,AM,Lábrea,Manicoré,57473
+1301803,Ipixuna,AM,Tefé,Eirunepé,24311
+1301852,Iranduba,AM,Manaus,Manaus,61163
+1301902,Itacoatiara,AM,Parintins,Itacoatiara,103598
+1301951,Itamarati,AM,Tefé,Eirunepé,10937
+1302009,Itapiranga,AM,Parintins,Itacoatiara,10162
+1302108,Japurá,AM,Tefé,Tefé,8858
+1302207,Juruá,AM,Tefé,Tefé,10742
+1302306,Jutaí,AM,Tefé,Tefé,25172
+1302405,Lábrea,AM,Lábrea,Lábrea,45448
+1302504,Manacapuru,AM,Manaus,Manacapuru,101883
+1302553,Manaquiri,AM,Manaus,Manaus,17107
+1302603,Manaus,AM,Manaus,Manaus,2063689
+1302702,Manicoré,AM,Lábrea,Manicoré,53914
+1302801,Maraã,AM,Tefé,Tefé,15529
+1302900,Maués,AM,Parintins,Parintins,61204
+1303007,Nhamundá,AM,Parintins,Parintins,20136
+1303106,Nova Olinda do Norte,AM,Manaus,Manaus,27062
+1303205,Novo Airão,AM,Manaus,Manacapuru,15761
+1303304,Novo Aripuanã,AM,Lábrea,Manicoré,23818
+1303403,Parintins,AM,Parintins,Parintins,96372
+1303502,Pauini,AM,Lábrea,Lábrea,19373
+1303536,Presidente Figueiredo,AM,Manaus,Manaus,30668
+1303569,Rio Preto da Eva,AM,Manaus,Manaus,24936
+1303601,Santa Isabel do Rio Negro,AM,Manaus,São Gabriel da Cachoeira,14164
+1303700,Santo Antônio do Içá,AM,Tefé,Tabatinga,28211
+1303809,São Gabriel da Cachoeira,AM,Manaus,São Gabriel da Cachoeira,51795
+1303908,São Paulo de Olivença,AM,Tefé,Tabatinga,32967
+1303957,São Sebastião do Uatumã,AM,Parintins,Itacoatiara,11670
+1304005,Silves,AM,Parintins,Itacoatiara,11559
+1304062,Tabatinga,AM,Tefé,Tabatinga,66764
+1304104,Tapauá,AM,Lábrea,Lábrea,19599
+1304203,Tefé,AM,Tefé,Tefé,73669
+1304237,Tonantins,AM,Tefé,Tabatinga,19247
+1304260,Uarini,AM,Tefé,Tefé,14431
+1304302,Urucará,AM,Parintins,Itacoatiara,18631
+1304401,Urucurituba,AM,Parintins,Itacoatiara,23945
+1500107,Abaetetuba,PA,Belém,Abaetetuba,158188
+1500131,Abel Figueiredo,PA,Marabá,Marabá,6136
+1500206,Acará,PA,Belém,Belém,59023
+1500305,Afuá,PA,Breves,Breves,37765
+1500347,Água Azul do Norte,PA,Redenção,Xinguara,18080
+1500404,Alenquer,PA,Santarém,Santarém,69377
+1500503,Almeirim,PA,Altamira,Almeirim - Porto de Moz,34280
+1500602,Altamira,PA,Altamira,Altamira,126279
+1500701,Anajás,PA,Breves,Breves,28011
+1500800,Ananindeua,PA,Belém,Belém,478778
+1500859,Anapu,PA,Altamira,Altamira,31850
+1500909,Augusto Corrêa,PA,Castanhal,Bragança,44573
+1500958,Aurora do Pará,PA,Castanhal,Paragominas,23774
+1501006,Aveiro,PA,Santarém,Itaituba,18290
+1501105,Bagre,PA,Breves,Breves,31892
+1501204,Baião,PA,Marabá,Tucuruí,51641
+1501253,Bannach,PA,Redenção,Redenção,4031
+1501303,Barcarena,PA,Belém,Belém,126650
+1501402,Belém,PA,Belém,Belém,1303403
+1501451,Belterra,PA,Santarém,Santarém,18099
+1501501,Benevides,PA,Belém,Belém,63567
+1501576,Bom Jesus do Tocantins,PA,Marabá,Marabá,18005
+1501600,Bonito,PA,Castanhal,Capanema,12622
+1501709,Bragança,PA,Castanhal,Bragança,123082
+1501725,Brasil Novo,PA,Altamira,Altamira,24718
+1501758,Brejo Grande do Araguaia,PA,Marabá,Marabá,6783
+1501782,Breu Branco,PA,Marabá,Tucuruí,45712
+1501808,Breves,PA,Breves,Breves,106968
+1501907,Bujaru,PA,Belém,Belém,24383
+1501956,Cachoeira do Piriá,PA,Castanhal,Bragança,19630
+1502004,Cachoeira do Arari,PA,Breves,Soure-Salvaterra,23981
+1502103,Cametá,PA,Belém,Cametá,134184
+1502152,Canaã dos Carajás,PA,Marabá,Parauapebas,77079
+1502202,Capanema,PA,Castanhal,Capanema,70394
+1502301,Capitão Poço,PA,Castanhal,Capitão Poço,56506
+1502400,Castanhal,PA,Castanhal,Castanhal,192256
+1502509,Chaves,PA,Breves,Breves,20757
+1502608,Colares,PA,Belém,Belém,12868
+1502707,Conceição do Araguaia,PA,Redenção,Redenção,44617
+1502756,Concórdia do Pará,PA,Belém,Belém,26881
+1502764,Cumaru do Norte,PA,Redenção,Redenção,14036
+1502772,Curionópolis,PA,Marabá,Parauapebas,19950
+1502806,Curralinho,PA,Breves,Breves,33903
+1502855,Curuá,PA,Santarém,Oriximiná,14117
+1502905,Curuçá,PA,Castanhal,Castanhal,41262
+1502939,Dom Eliseu,PA,Castanhal,Paragominas,58484
+1502954,Eldorado do Carajás,PA,Marabá,Parauapebas,28192
+1503002,Faro,PA,Santarém,Oriximiná,8728
+1503044,Floresta do Araguaia,PA,Redenção,Redenção,17898
+1503077,Garrafão do Norte,PA,Castanhal,Capitão Poço,24703
+1503093,Goianésia do Pará,PA,Marabá,Tucuruí,26362
+1503101,Gurupá,PA,Breves,Breves,31786
+1503200,Igarapé-Açu,PA,Castanhal,Castanhal,35797
+1503309,Igarapé-Miri,PA,Belém,Abaetetuba,64831
+1503408,Inhangapi,PA,Castanhal,Castanhal,10325
+1503457,Ipixuna do Pará,PA,Castanhal,Paragominas,30329
+1503507,Irituia,PA,Castanhal,Castanhal,30955
+1503606,Itaituba,PA,Santarém,Itaituba,123314
+1503705,Itupiranga,PA,Marabá,Marabá,49754
+1503754,Jacareacanga,PA,Santarém,Itaituba,24042
+1503804,Jacundá,PA,Marabá,Marabá,37707
+1503903,Juruti,PA,Santarém,Oriximiná,50881
+1504000,Limoeiro do Ajuru,PA,Belém,Cametá,29569
+1504059,Mãe do Rio,PA,Castanhal,Paragominas,34353
+1504109,Magalhães Barata,PA,Castanhal,Castanhal,8115
+1504208,Marabá,PA,Marabá,Marabá,266533
+1504307,Maracanã,PA,Castanhal,Castanhal,25971
+1504406,Marapanim,PA,Castanhal,Castanhal,26573
+1504422,Marituba,PA,Belém,Belém,111785
+1504455,Medicilândia,PA,Altamira,Altamira,27094
+1504505,Melgaço,PA,Breves,Breves,27881
+1504604,Mocajuba,PA,Belém,Cametá,27198
+1504703,Moju,PA,Belém,Abaetetuba,84094
+1504752,Mojuí dos Campos,PA,Santarém,Santarém,23501
+1504802,Monte Alegre,PA,Santarém,Santarém,60012
+1504901,Muaná,PA,Breves,Soure-Salvaterra,45368
+1504950,Nova Esperança do Piriá,PA,Castanhal,Capitão Poço,20478
+1504976,Nova Ipixuna,PA,Marabá,Marabá,13955
+1505007,Nova Timboteua,PA,Castanhal,Capanema,12806
+1505031,Novo Progresso,PA,Santarém,Itaituba,33638
+1505064,Novo Repartimento,PA,Marabá,Tucuruí,60732
+1505106,Óbidos,PA,Santarém,Oriximiná,52229
+1505205,Oeiras do Pará,PA,Belém,Cametá,33844
+1505304,Oriximiná,PA,Santarém,Oriximiná,68294
+1505403,Ourém,PA,Castanhal,Capitão Poço,17855
+1505437,Ourilândia do Norte,PA,Redenção,Tucumã - São Félix do Xingu,32467
+1505486,Pacajá,PA,Marabá,Tucuruí,41097
+1505494,Palestina do Pará,PA,Marabá,Marabá,6885
+1505502,Paragominas,PA,Castanhal,Paragominas,105550
+1505536,Parauapebas,PA,Marabá,Parauapebas,267836
+1505551,Pau D'Arco,PA,Redenção,Redenção,6931
+1505601,Peixe-Boi,PA,Castanhal,Capanema,8285
+1505635,Piçarra,PA,Marabá,Marabá,12832
+1505650,Placas,PA,Santarém,Itaituba,18668
+1505700,Ponta de Pedras,PA,Breves,Soure-Salvaterra,24984
+1505809,Portel,PA,Breves,Breves,62503
+1505908,Porto de Moz,PA,Altamira,Almeirim - Porto de Moz,40597
+1506005,Prainha,PA,Santarém,Santarém,35577
+1506104,Primavera,PA,Castanhal,Capanema,10851
+1506112,Quatipuru,PA,Castanhal,Capanema,11524
+1506138,Redenção,PA,Redenção,Redenção,85597
+1506161,Rio Maria,PA,Redenção,Xinguara,18384
+1506187,Rondon do Pará,PA,Marabá,Marabá,53143
+1506195,Rurópolis,PA,Santarém,Itaituba,35769
+1506203,Salinópolis,PA,Castanhal,Capanema,44772
+1506302,Salvaterra,PA,Breves,Soure-Salvaterra,24129
+1506351,Santa Bárbara do Pará,PA,Belém,Belém,21087
+1506401,Santa Cruz do Arari,PA,Breves,Soure-Salvaterra,7445
+1506500,Santa Izabel do Pará,PA,Belém,Belém,73019
+1506559,Santa Luzia do Pará,PA,Castanhal,Bragança,20370
+1506583,Santa Maria das Barreiras,PA,Redenção,Redenção,16548
+1506609,Santa Maria do Pará,PA,Castanhal,Castanhal,24624
+1506708,Santana do Araguaia,PA,Redenção,Redenção,32413
+1506807,Santarém,PA,Santarém,Santarém,331942
+1506906,Santarém Novo,PA,Castanhal,Capanema,6116
+1507003,Santo Antônio do Tauá,PA,Belém,Belém,27461
+1507102,São Caetano de Odivelas,PA,Belém,Belém,16666
+1507151,São Domingos do Araguaia,PA,Marabá,Marabá,21092
+1507201,São Domingos do Capim,PA,Castanhal,Castanhal,30599
+1507300,São Félix do Xingu,PA,Redenção,Tucumã - São Félix do Xingu,65418
+1507409,São Francisco do Pará,PA,Castanhal,Castanhal,14894
+1507458,São Geraldo do Araguaia,PA,Marabá,Marabá,24255
+1507466,São João da Ponta,PA,Castanhal,Castanhal,4430
+1507474,São João de Pirabas,PA,Castanhal,Capanema,20689
+1507508,São João do Araguaia,PA,Marabá,Marabá,13664
+1507607,São Miguel do Guamá,PA,Castanhal,Castanhal,52894
+1507706,São Sebastião da Boa Vista,PA,Breves,Breves,25643
+1507755,Sapucaia,PA,Redenção,Xinguara,5847
+1507805,Senador José Porfírio,PA,Altamira,Altamira,22576
+1507904,Soure,PA,Breves,Soure-Salvaterra,24204
+1507953,Tailândia,PA,Belém,Abaetetuba,72493
+1507961,Terra Alta,PA,Castanhal,Castanhal,10400
+1507979,Terra Santa,PA,Santarém,Oriximiná,18782
+1508001,Tomé-Açu,PA,Belém,Belém,67585
+1508035,Tracuateua,PA,Castanhal,Bragança,28595
+1508050,Trairão,PA,Santarém,Itaituba,15242
+1508084,Tucumã,PA,Redenção,Tucumã - São Félix do Xingu,39550
+1508100,Tucuruí,PA,Marabá,Tucuruí,91306
+1508126,Ulianópolis,PA,Castanhal,Paragominas,37972
+1508159,Uruará,PA,Altamira,Altamira,43558
+1508209,Vigia,PA,Belém,Belém,50832
+1508308,Viseu,PA,Castanhal,Bragança,58692
+1508357,Vitória do Xingu,PA,Altamira,Altamira,15607
+1508407,Xinguara,PA,Redenção,Xinguara,52893
+1600055,Serra do Navio,AP,Oiapoque - Porto Grande,Porto Grande,4673
+1600105,Amapá,AP,Oiapoque - Porto Grande,Oiapoque,7943
+1600154,Pedra Branca do Amapari,AP,Oiapoque - Porto Grande,Porto Grande,12847
+1600204,Calçoene,AP,Oiapoque - Porto Grande,Oiapoque,10612
+1600212,Cutias,AP,Oiapoque - Porto Grande,Oiapoque,4461
+1600238,Ferreira Gomes,AP,Oiapoque - Porto Grande,Porto Grande,6666
+1600253,Itaubal,AP,Macapá,Macapá,5599
+1600279,Laranjal do Jari,AP,Macapá,Laranjal do Jari,35114
+1600303,Macapá,AP,Macapá,Macapá,442933
+1600402,Mazagão,AP,Macapá,Macapá,21924
+1600501,Oiapoque,AP,Oiapoque - Porto Grande,Oiapoque,27482
+1600535,Porto Grande,AP,Oiapoque - Porto Grande,Porto Grande,17848
+1600550,Pracuúba,AP,Oiapoque - Porto Grande,Oiapoque,3803
+1600600,Santana,AP,Macapá,Macapá,107618
+1600709,Tartarugalzinho,AP,Oiapoque - Porto Grande,Oiapoque,12945
+1600808,Vitória do Jari,AP,Macapá,Laranjal do Jari,11291

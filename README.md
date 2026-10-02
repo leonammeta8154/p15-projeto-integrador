@@ -57,10 +57,11 @@ p15-projeto-integrador/
 ├── .env.example          # modelo da conexão com o PostgreSQL
 ├── data/
 │   ├── raw/              # dados brutos, exatamente como recebidos
-│   └── processed/        # dados tratados pelo ETL
+│   └── processed/        # cópia em CSV das tabelas do dw (gerada pelo ETL)
 ├── sql/
 │   ├── 01_estrutura.sql            # Etapa 2: schemas, tabelas, chaves e índices
-│   └── 02_verificacao_staging.sql  # Etapa 2: consultas de verificação
+│   ├── 02_verificacao_staging.sql  # Etapa 2: consultas de verificação da staging
+│   └── 03_verificacao_dw.sql       # Etapa 3: consultas no modelo estrela
 ├── src/
 │   ├── config.py         # escopo, parâmetros e caminhos
 │   ├── utils.py          # leitura dos formatos do IBGE
@@ -68,10 +69,12 @@ p15-projeto-integrador/
 │   ├── extract.py        # Etapa 1: coleta das fontes públicas
 │   ├── gerar_vendas.py   # Etapa 1: geração da fonte de vendas simulada
 │   ├── setup_db.py       # Etapa 2: cria o banco e a estrutura
-│   └── load_staging.py   # Etapa 2: carrega data/raw na staging
+│   ├── load_staging.py   # Etapa 2: carrega data/raw na staging
+│   ├── transform.py      # Etapa 3: regras de transformação (funções puras)
+│   └── etl.py            # Etapa 3: staging → modelo dimensional
 ├── notebooks/            # análise exploratória e notebook final
 ├── models/               # modelo treinado
-└── reports/              # métricas e resultados
+└── reports/              # relatório de qualidade do ETL, métricas e resultados
 ```
 
 ## Modelagem no PostgreSQL
@@ -141,6 +144,36 @@ Decisões de modelagem:
 - **Chave primária composta na `fato_vendas`** (município, produto, mês): garante no próprio banco que não existe venda duplicada para a mesma combinação.
 - **`id_tempo` no formato AAAAMM:** legível e ordenável (ex.: `202410`).
 - **`NULL` na produção extrativa significa "dado não disponível no IBGE"**, diferente de zero (símbolo `-` do SIDRA).
+- **`dw.log_qualidade_etl`** guarda, a cada execução do ETL, quantos registros cada regra corrigiu ou descartou, formando um histórico auditável.
+
+## ETL em Python
+
+O ETL (`src/etl.py`) lê a staging do PostgreSQL, aplica as regras de `src/transform.py` e grava o modelo dimensional em uma única transação: se algo falhar, o `dw` não fica pela metade. O `dw` é sempre reconstruído do zero a partir da staging, então o ETL pode ser executado quantas vezes for preciso com o mesmo resultado.
+
+### Regras aplicadas às vendas
+
+A ordem das regras importa: por exemplo, o sinal da quantidade é corrigido antes da checagem de consistência com a receita.
+
+| # | Regra | Como funciona |
+|---|-------|---------------|
+| 1 | Duplicatas | Remove linhas idênticas |
+| 2 | Produto | Normaliza o texto (minúsculas, sem acentos) e identifica o produto por palavra-chave: `AÇAÍ`, ` Açaí ` e `acai` viram o mesmo produto |
+| 3 | Mês | Aceita `AAAA-MM` e `MM/AAAA` e converte para o `id_tempo` (AAAAMM) |
+| 4 | Código IBGE ausente | Recupera pelo nome do município (normalizado) + UF, usando o cadastro do IBGE |
+| 5 | Nome do município | O nome digitado é descartado; o nome oficial vem da `dim_municipio` |
+| 6 | Sinal da quantidade | Quantidade negativa tem o sinal corrigido |
+| 7 | Erro de digitação | Se quantidade × preço difere da receita em mais de 5%, a receita é tomada como confiável e a quantidade é recalculada por receita ÷ preço |
+| 8 | Preço ausente | Recalculado por receita ÷ quantidade |
+| 9 | Preço implausível | Descarta registros com preço fora de 0,2x a 5x a mediana do produto (casos sem informação suficiente para correção segura) |
+| 10 | Chave única | Garante uma única linha por município, produto e mês |
+
+Na PEVS, o ETL mantém só os 3 produtos do projeto, converte o símbolo `-` em zero e `...`, `..` e `X` em `NULL`.
+
+### Validação do ETL
+
+Como as vendas são simuladas, existe um gabarito: a base antes da inserção dos erros. Nos testes, o ETL recuperou exatamente os valores originais de quantidade, preço e receita em todos os registros gravados; apenas um registro foi descartado, por acumular dois erros na mesma linha (quantidade 100x maior e preço ausente).
+
+O relatório completo de cada execução fica em `reports/qualidade_etl.csv` e na tabela `dw.log_qualidade_etl`.
 
 ## Como executar
 
@@ -161,6 +194,9 @@ python -m src.gerar_vendas     # gera data/raw/vendas_simuladas.csv
 copy .env.example .env         # depois edite o .env com a senha do PostgreSQL
 python -m src.setup_db         # cria o banco bioeconomia e as tabelas
 python -m src.load_staging     # carrega data/raw na staging
+
+# Etapa 3: ETL
+python -m src.etl              # staging → modelo dimensional (dw)
 ```
 
 Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`. Para recriar as tabelas do zero, use `python -m src.setup_db --recriar`.
@@ -171,13 +207,14 @@ Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
 \! chcp 65001
 \cd 'C:/p15-projeto-integrador'
 \i sql/02_verificacao_staging.sql
+\i sql/03_verificacao_dw.sql
 ```
 
 ## Andamento
 
 - [x] Etapa 1: estrutura do repositório e coleta de dados (2+ fontes)
 - [x] Etapa 2: modelagem no PostgreSQL e carga dos dados brutos (staging)
-- [ ] Etapa 3: ETL em Python (staging → modelo dimensional)
+- [x] Etapa 3: ETL em Python (staging → modelo dimensional)
 - [ ] Etapa 4: análise exploratória (notebook)
 - [ ] Etapa 5: engenharia de features
 - [ ] Etapa 6: modelo de classificação e métricas

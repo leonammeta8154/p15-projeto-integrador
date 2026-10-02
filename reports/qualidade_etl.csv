@@ -1,0 +1,26 @@
+tabela,regra,registros
+dim_municipio,registros lidos da staging,222
+dim_municipio,descartados: código ausente ou repetido,0
+dim_municipio,municípios sem população no Censo 2022,0
+fato_producao_extrativa,registros lidos da staging (todos os produtos),111888
+fato_producao_extrativa,registros dos 3 produtos do projeto (demais ignorados),5328
+fato_producao_extrativa,símbolo '-' do IBGE convertido em zero,2150
+fato_producao_extrativa,"símbolos '...', '..' ou 'X' do IBGE convertidos em NULL (não disponível)",264
+fato_producao_extrativa,descartados: município fora do cadastro,0
+fato_producao_extrativa,registros gravados,2664
+fato_vendas,registros lidos da staging,24167
+fato_vendas,linhas duplicadas removidas,191
+fato_vendas,nome do produto padronizado,3596
+fato_vendas,descartados: produto não reconhecido,0
+fato_vendas,mês convertido de MM/AAAA,2397
+fato_vendas,descartados: mês inválido ou fora do período,0
+fato_vendas,código IBGE recuperado por nome do município + UF,119
+fato_vendas,descartados: município não identificado,0
+fato_vendas,nome do município fora do padrão (substituído pelo cadastro),1198
+fato_vendas,descartados: quantidade ou receita não numérica,0
+fato_vendas,quantidade negativa corrigida (sinal),47
+fato_vendas,quantidade recalculada por receita / preço (erro de digitação),70
+fato_vendas,preço unitário recalculado por receita / quantidade,359
+fato_vendas,descartados: preço fora da faixa plausível do produto,1
+fato_vendas,descartados: chave município + produto + mês repetida,0
+fato_vendas,registros gravados,23975

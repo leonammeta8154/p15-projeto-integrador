@@ -140,30 +140,24 @@ def identificar_produto(nome_categoria: str, produtos: dict):
     return None
 
 
-def carregar_pevs(dir_raw: Path, ufs, anos, produtos) -> pd.DataFrame:
-    """Produção extrativa (PEVS) em formato largo: quantidade e valor por linha."""
-    partes = []
-    for uf in ufs:
-        for ano in anos:
-            caminho = dir_raw / f"sidra_289_pevs_{uf}_{ano}.json"
-            if caminho.exists():
-                partes.append(ler_sidra(caminho))
-    df = pd.concat(partes, ignore_index=True)
-    df["produto"] = df["categoria"].map(lambda c: identificar_produto(c, produtos))
-    df = df[df["produto"].notna()].copy()
+def pevs_largo(df: pd.DataFrame) -> pd.DataFrame:
+    """Converte a PEVS do formato longo do SIDRA (uma linha por variável) para
+    o formato largo: uma linha por município, produto e ano, com quantidade
+    produzida e valor da produção lado a lado.
 
+    Espera as colunas cod_ibge, ano, variavel, produto, unidade e valor (numérico).
+    """
     var = df["variavel"].map(normalizar_texto)
-    df["medida"] = np.where(var.str.startswith("quantidade"), "quantidade_produzida", "valor_producao_mil_reais")
+    df = df.assign(
+        medida=np.where(var.str.startswith("quantidade"), "quantidade_produzida", "valor_producao_mil_reais")
+    )
 
-    # aggfunc="first" preserva NaN (valor não disponível); "sum" viraria zero
+    # first() mantém NaN quando o valor não está disponível; sum() viraria zero
     largo = (
-        df.pivot_table(
-            index=["cod_ibge", "produto", "ano"],
-            columns="medida",
-            values="valor",
-            aggfunc="first",
-            dropna=False,
-        )
+        df.groupby(["cod_ibge", "produto", "ano", "medida"])["valor"]
+        .first()
+        .unstack("medida")
+        .reindex(columns=["quantidade_produzida", "valor_producao_mil_reais"])
         .reset_index()
     )
     largo.columns.name = None
@@ -178,3 +172,17 @@ def carregar_pevs(dir_raw: Path, ufs, anos, produtos) -> pd.DataFrame:
     largo["cod_ibge"] = largo["cod_ibge"].astype(int)
     largo["ano"] = largo["ano"].astype(int)
     return largo
+
+
+def carregar_pevs(dir_raw: Path, ufs, anos, produtos) -> pd.DataFrame:
+    """Produção extrativa (PEVS) dos produtos do projeto, lida dos arquivos brutos."""
+    partes = []
+    for uf in ufs:
+        for ano in anos:
+            caminho = dir_raw / f"sidra_289_pevs_{uf}_{ano}.json"
+            if caminho.exists():
+                partes.append(ler_sidra(caminho))
+    df = pd.concat(partes, ignore_index=True)
+    df["produto"] = df["categoria"].map(lambda c: identificar_produto(c, produtos))
+    df = df[df["produto"].notna()].copy()
+    return pevs_largo(df)
