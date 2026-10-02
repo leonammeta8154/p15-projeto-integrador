@@ -1,0 +1,13 @@
+# Ambiente virtual e caches
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Credenciais (nunca versionar)
+.env
+
+# Editor
+.vscode/
+.idea/
