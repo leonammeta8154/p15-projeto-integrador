@@ -47,14 +47,14 @@ def criar_engine(banco: str | None = None, autocommit: bool = False) -> Engine:
 
 
 def testar_conexao(engine: Engine) -> str:
-    """Retorna a versão do servidor. Traduz o erro mais comum no Windows:
-    com o PostgreSQL em português, a mensagem de senha incorreta chega com
-    acentos em outra codificação e vira UnicodeDecodeError."""
+    """Retorna a versão do servidor.
+
+    No Windows com o PostgreSQL em português, as mensagens de erro chegam em
+    WIN1252 e o psycopg2 não consegue lê-las (UnicodeDecodeError). Aqui a
+    mensagem original é recuperada e exibida."""
     try:
         with engine.connect() as conn:
             return conn.execute(text("SELECT version()")).scalar()
     except UnicodeDecodeError as erro:
-        raise RuntimeError(
-            "Falha ao conectar no PostgreSQL. Causa mais provável: senha incorreta "
-            "no arquivo .env (PGPASSWORD)."
-        ) from erro
+        mensagem = erro.object.decode("cp1252", errors="replace").strip()
+        raise RuntimeError(f"Falha ao conectar no PostgreSQL: {mensagem}") from None
