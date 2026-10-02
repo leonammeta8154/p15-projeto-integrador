@@ -71,10 +71,15 @@ p15-projeto-integrador/
 │   ├── setup_db.py       # Etapa 2: cria o banco e a estrutura
 │   ├── load_staging.py   # Etapa 2: carrega data/raw na staging
 │   ├── transform.py      # Etapa 3: regras de transformação (funções puras)
-│   └── etl.py            # Etapa 3: staging → modelo dimensional
-├── notebooks/            # análise exploratória e notebook final
+│   ├── etl.py            # Etapa 3: staging → modelo dimensional
+│   ├── leitura.py        # Etapa 4: leitura do dw (PostgreSQL ou CSV) e base de vendas
+│   └── features.py       # Etapa 4/5: variável alvo e features
+├── notebooks/
+│   └── 01_eda.ipynb      # Etapa 4: análise exploratória
 ├── models/               # modelo treinado
-└── reports/              # relatório de qualidade do ETL, métricas e resultados
+└── reports/
+    ├── qualidade_etl.csv # relatório de qualidade do ETL
+    └── figuras/          # gráficos gerados pelos notebooks
 ```
 
 ## Modelagem no PostgreSQL
@@ -175,6 +180,25 @@ Como as vendas são simuladas, existe um gabarito: a base antes da inserção do
 
 O relatório completo de cada execução fica em `reports/qualidade_etl.csv` e na tabela `dw.log_qualidade_etl`.
 
+## Análise exploratória
+
+O notebook `notebooks/01_eda.ipynb` lê o modelo estrela direto do PostgreSQL (ou de `data/processed`, se o banco não estiver disponível) e orienta as escolhas de modelagem.
+
+### Variável alvo
+
+`alta_demanda = 1` quando a quantidade vendida no mês supera a **média dos 12 meses anteriores** do mesmo município e produto. O alvo compara cada município com o próprio histórico, usa apenas meses passados e existe de jan/2023 a dez/2024 (2022 serve de histórico).
+
+### Principais achados
+
+- **Volume dominado pela população:** a relação entre população e vendas é quase linear em escala log-log. Por isso o alvo é relativo ao histórico de cada município, e variáveis de volume entram em log ou como razões.
+- **Sazonalidade forte e própria de cada produto:** o açaí tem pico em outubro e vale em abril; a castanha-do-pará, pico em fevereiro e vale em agosto; o óleo de copaíba varia pouco. O preço se move no sentido oposto à quantidade.
+- **Persistência:** depois de um mês de alta demanda, a chance de outro mês de alta é bem maior, o que justifica features de defasagem.
+- **Produção local:** municípios que produziram no ano anterior vendem mais por habitante, mas a produção quase não se correlaciona com o alvo mensal; entra no modelo apenas como contexto.
+
+![Sazonalidade de quantidade e preço](reports/figuras/03_sazonalidade.png)
+
+![Taxa de alta demanda por mês e persistência](reports/figuras/08_alvo_sazonalidade_persistencia.png)
+
 ## Como executar
 
 Pré-requisitos: Python 3.10+, Git e PostgreSQL (testado nas versões 16 e 18).
@@ -199,6 +223,8 @@ python -m src.load_staging     # carrega data/raw na staging
 python -m src.etl              # staging → modelo dimensional (dw)
 ```
 
+Etapa 4: abra `notebooks/01_eda.ipynb` no VS Code (ou no Jupyter), selecione o kernel do `.venv` e execute todas as células. As figuras são salvas em `reports/figuras/`.
+
 Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`. Para recriar as tabelas do zero, use `python -m src.setup_db --recriar`.
 
 Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
@@ -215,7 +241,7 @@ Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
 - [x] Etapa 1: estrutura do repositório e coleta de dados (2+ fontes)
 - [x] Etapa 2: modelagem no PostgreSQL e carga dos dados brutos (staging)
 - [x] Etapa 3: ETL em Python (staging → modelo dimensional)
-- [ ] Etapa 4: análise exploratória (notebook)
+- [x] Etapa 4: análise exploratória (notebook)
 - [ ] Etapa 5: engenharia de features
 - [ ] Etapa 6: modelo de classificação e métricas
 - [ ] Etapa 7: documentação final e notebook de entrega
