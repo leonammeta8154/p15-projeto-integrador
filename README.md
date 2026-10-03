@@ -73,12 +73,15 @@ p15-projeto-integrador/
 │   ├── transform.py      # Etapa 3: regras de transformação (funções puras)
 │   ├── etl.py            # Etapa 3: staging → modelo dimensional
 │   ├── leitura.py        # Etapa 4: leitura do dw (PostgreSQL ou CSV) e base de vendas
-│   └── features.py       # Etapa 4/5: variável alvo e features
+│   ├── features.py       # Etapa 5: variável alvo e features (só informação até t-1)
+│   └── build_features.py # Etapa 5: gera a base de modelagem (ml.features_demanda)
 ├── notebooks/
-│   └── 01_eda.ipynb      # Etapa 4: análise exploratória
+│   ├── 01_eda.ipynb      # Etapa 4: análise exploratória
+│   └── 02_features.ipynb # Etapa 5: engenharia de features e teste de vazamento
 ├── models/               # modelo treinado
 └── reports/
     ├── qualidade_etl.csv # relatório de qualidade do ETL
+    ├── dicionario_features.csv
     └── figuras/          # gráficos gerados pelos notebooks
 ```
 
@@ -90,6 +93,7 @@ O banco `bioeconomia` tem duas camadas, uma por schema:
 |--------|-------|----------------|
 | `staging` | Recebe os dados brutos das 4 fontes | Tudo em `TEXT`, sem restrições: guarda o dado exatamente como chegou, inclusive os símbolos do IBGE (`-`, `...`, `X`) e os erros das vendas. Cada linha registra o arquivo de origem e o horário da carga. |
 | `dw` | Modelo dimensional (estrela) tratado pelo ETL | Tipos corretos, chaves primárias e estrangeiras, `CHECK` de valores válidos e índices. |
+| `ml` | Base de modelagem | Tabela `ml.features_demanda`: uma linha por município, produto e mês, com as features e o alvo. |
 
 Separar as camadas permite reprocessar o ETL sem baixar os dados de novo e auditar qualquer valor tratado comparando com o original na staging.
 
@@ -199,6 +203,25 @@ O notebook `notebooks/01_eda.ipynb` lê o modelo estrela direto do PostgreSQL (o
 
 ![Taxa de alta demanda por mês e persistência](reports/figuras/08_alvo_sazonalidade_persistencia.png)
 
+## Engenharia de features
+
+A base de modelagem (`src/features.py`, gerada por `python -m src.build_features`) tem uma linha por município, produto e mês de 2023 e 2024, gravada em `ml.features_demanda` e em `data/processed/features_modelo.csv`.
+
+**Regra principal: nenhuma feature usa informação do próprio mês previsto ou do futuro.** Tudo é calculado com dados até o mês anterior (t-1), e as defasagens seguem o calendário, não a posição da linha na tabela.
+
+| Grupo | Features | Achado da EDA que motivou |
+|-------|----------|---------------------------|
+| Memória recente | `log_razao_lag1`, `log_razao_lag2`, `log_razao_media3`, `log_variacao_lag1`, `alta_mes_anterior` | Persistência entre meses consecutivos |
+| Sazonalidade | `log_razao_lag12`, `indice_sazonal_hist`, `mes_seno`, `mes_cosseno` | Calendário de safra próprio de cada produto |
+| Preço | `log_preco_rel_lag1` | Preço se move no sentido oposto à quantidade |
+| Contexto | `log_populacao`, `log_producao_ano_anterior`, `produz_no_municipio`, `producao_indisponivel`, `chave` (produto), `uf` | Diferenças de patamar entre municípios e produtos |
+
+As variáveis de volume entram como log da razão sobre a média dos 12 meses anteriores, o que põe municípios de tamanhos muito diferentes na mesma escala. A descrição de cada feature está em `reports/dicionario_features.csv`.
+
+**Teste automático de vazamento:** o notebook `02_features.ipynb` altera artificialmente as vendas de um mês e recalcula todas as features. Nenhuma feature daquele mês ou dos anteriores muda, e as dos meses seguintes mudam, o que comprova que o teste é sensível e que não há vazamento.
+
+**Divisão temporal:** treino em 2023 e teste em 2024, sem embaralhar, reproduzindo o uso real do modelo.
+
 ## Como executar
 
 Pré-requisitos: Python 3.10+, Git e PostgreSQL (testado nas versões 16 e 18).
@@ -225,6 +248,14 @@ python -m src.etl              # staging → modelo dimensional (dw)
 
 Etapa 4: abra `notebooks/01_eda.ipynb` no VS Code (ou no Jupyter), selecione o kernel do `.venv` e execute todas as células. As figuras são salvas em `reports/figuras/`.
 
+Etapa 5:
+
+```powershell
+python -m src.build_features   # gera ml.features_demanda e data/processed/features_modelo.csv
+```
+
+Depois execute `notebooks/02_features.ipynb`, que documenta as features, roda o teste de vazamento e confere a base gravada.
+
 Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`. Para recriar as tabelas do zero, use `python -m src.setup_db --recriar`.
 
 Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
@@ -242,6 +273,6 @@ Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
 - [x] Etapa 2: modelagem no PostgreSQL e carga dos dados brutos (staging)
 - [x] Etapa 3: ETL em Python (staging → modelo dimensional)
 - [x] Etapa 4: análise exploratória (notebook)
-- [ ] Etapa 5: engenharia de features
+- [x] Etapa 5: engenharia de features
 - [ ] Etapa 6: modelo de classificação e métricas
 - [ ] Etapa 7: documentação final e notebook de entrega

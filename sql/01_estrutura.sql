@@ -1,19 +1,22 @@
 -- =============================================================================
 -- P15 Projeto Integrador: estrutura do banco "bioeconomia"
 --
--- Duas camadas:
+-- Três camadas:
 --   staging : dados brutos, exatamente como chegaram das fontes (tudo texto)
 --   dw      : modelo dimensional (estrela), com tipos, chaves e restrições,
 --             preenchido pelo ETL em Python a partir da staging
+--   ml      : base de modelagem (features e alvo), gerada a partir do dw
 --
 -- Pode ser executado mais de uma vez (IF NOT EXISTS).
 -- =============================================================================
 
 CREATE SCHEMA IF NOT EXISTS staging;
 CREATE SCHEMA IF NOT EXISTS dw;
+CREATE SCHEMA IF NOT EXISTS ml;
 
 COMMENT ON SCHEMA staging IS 'Dados brutos das fontes, sem tratamento (tudo em texto).';
 COMMENT ON SCHEMA dw IS 'Modelo dimensional tratado pelo ETL, base para features e modelo.';
+COMMENT ON SCHEMA ml IS 'Base de modelagem (features e alvo), gerada por src/build_features.py.';
 
 -- -----------------------------------------------------------------------------
 -- CAMADA STAGING

@@ -1,0 +1,17 @@
+feature,grupo,descricao,informacao_usada
+log_razao_lag1,Memória recente,Log da razão entre a quantidade do mês anterior e a média dos 12 meses anteriores,t-1
+log_razao_lag2,Memória recente,Log da razão entre a quantidade de dois meses antes e a média dos 12 meses anteriores,t-2
+log_razao_media3,Memória recente,Log da razão entre a média dos últimos 3 meses e a média dos 12 meses anteriores,t-3 a t-1
+log_variacao_lag1,Memória recente,Log da variação da quantidade entre os dois últimos meses,t-2 e t-1
+alta_mes_anterior,Memória recente,"Alvo do mês anterior (1 = alta demanda); vazio em jan/2023, pois 2022 não tem alvo",t-1
+log_razao_lag12,Sazonalidade,Log da razão entre a quantidade do mesmo mês do ano anterior e a média dos 12 meses anteriores,t-12
+indice_sazonal_hist,Sazonalidade,"Índice sazonal do produto no mês do ano, calculado só com os anos anteriores",anos anteriores
+mes_seno,Sazonalidade,Seno do mês do ano (codificação cíclica),calendário
+mes_cosseno,Sazonalidade,Cosseno do mês do ano (codificação cíclica),calendário
+log_preco_rel_lag1,Preço,Log da razão entre o preço do mês anterior e a média de preço dos 12 meses anteriores,t-1
+log_populacao,Contexto,Log da população residente (Censo 2022),estático
+log_producao_ano_anterior,Contexto,Log da produção extrativa do produto no município no ano anterior (PEVS),ano anterior
+produz_no_municipio,Contexto,1 se houve produção extrativa do produto no município no ano anterior,ano anterior
+producao_indisponivel,Contexto,1 se o IBGE não divulgou a produção do ano anterior (símbolo ...),ano anterior
+chave,Contexto,"Produto (categórica: açaí, castanha-do-pará, copaíba)",estático
+uf,Contexto,"Unidade da federação (categórica: AP, PA, AM)",estático
