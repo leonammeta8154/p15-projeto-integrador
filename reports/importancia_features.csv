@@ -1,0 +1,17 @@
+feature,queda_f1_media,queda_f1_desvio
+log_razao_lag1,0.1369,0.0036
+indice_sazonal_hist,0.1091,0.0028
+log_razao_lag2,0.0581,0.0029
+log_variacao_lag1,0.0233,0.0021
+log_razao_media3,0.0187,0.0021
+log_preco_rel_lag1,0.0055,0.0018
+chave,0.0014,0.0008
+produz_no_municipio,0.001,0.0006
+alta_mes_anterior,0.0005,0.0007
+uf,0.0005,0.0003
+log_producao_ano_anterior,0.0003,0.0004
+log_populacao,0.0002,0.0005
+mes_cosseno,0.0002,0.0007
+producao_indisponivel,-0.0002,0.0002
+log_razao_lag12,-0.0002,0.0003
+mes_seno,-0.0003,0.0005

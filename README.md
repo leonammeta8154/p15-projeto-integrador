@@ -74,14 +74,21 @@ p15-projeto-integrador/
 │   ├── etl.py            # Etapa 3: staging → modelo dimensional
 │   ├── leitura.py        # Etapa 4: leitura do dw (PostgreSQL ou CSV) e base de vendas
 │   ├── features.py       # Etapa 5: variável alvo e features (só informação até t-1)
-│   └── build_features.py # Etapa 5: gera a base de modelagem (ml.features_demanda)
+│   ├── build_features.py # Etapa 5: gera a base de modelagem (ml.features_demanda)
+│   ├── modelagem.py      # Etapa 6: modelos, validação temporal e métricas
+│   └── train.py          # Etapa 6: treina, avalia e salva o modelo final
 ├── notebooks/
 │   ├── 01_eda.ipynb      # Etapa 4: análise exploratória
-│   └── 02_features.ipynb # Etapa 5: engenharia de features e teste de vazamento
-├── models/               # modelo treinado
+│   ├── 02_features.ipynb # Etapa 5: engenharia de features e teste de vazamento
+│   └── 03_modelo.ipynb   # Etapa 6: treinamento, comparação e análise do modelo
+├── models/
+│   └── modelo_alta_demanda.pkl  # pipeline final + metadados
 └── reports/
     ├── qualidade_etl.csv # relatório de qualidade do ETL
     ├── dicionario_features.csv
+    ├── metricas_modelos.csv      # comparação dos modelos no teste
+    ├── metricas_por_produto.csv
+    ├── importancia_features.csv
     └── figuras/          # gráficos gerados pelos notebooks
 ```
 
@@ -93,7 +100,7 @@ O banco `bioeconomia` tem duas camadas, uma por schema:
 |--------|-------|----------------|
 | `staging` | Recebe os dados brutos das 4 fontes | Tudo em `TEXT`, sem restrições: guarda o dado exatamente como chegou, inclusive os símbolos do IBGE (`-`, `...`, `X`) e os erros das vendas. Cada linha registra o arquivo de origem e o horário da carga. |
 | `dw` | Modelo dimensional (estrela) tratado pelo ETL | Tipos corretos, chaves primárias e estrangeiras, `CHECK` de valores válidos e índices. |
-| `ml` | Base de modelagem | Tabela `ml.features_demanda`: uma linha por município, produto e mês, com as features e o alvo. |
+| `ml` | Base de modelagem e resultados | `ml.features_demanda` (features e alvo), `ml.metricas_modelos` (comparação dos modelos) e `ml.previsoes_teste` (previsões de 2024). |
 
 Separar as camadas permite reprocessar o ETL sem baixar os dados de novo e auditar qualquer valor tratado comparando com o original na staging.
 
@@ -222,6 +229,29 @@ As variáveis de volume entram como log da razão sobre a média dos 12 meses an
 
 **Divisão temporal:** treino em 2023 e teste em 2024, sem embaralhar, reproduzindo o uso real do modelo.
 
+## Modelo de classificação
+
+O treinamento (`src/modelagem.py`, executado por `python -m src.train`) segue uma metodologia que evita resultados otimistas:
+
+- **Treino em 2023 e teste em 2024**, sem embaralhar. O teste é usado uma única vez, na avaliação final.
+- **Seleção por validação temporal dentro de 2023**, com janela crescente: treina até junho e valida em julho e agosto; até agosto, valida em setembro e outubro; até outubro, valida em novembro e dezembro. Hiperparâmetros e modelo final são escolhidos pela média do F1 nessa validação, nunca pelo teste.
+- **Pré-processamento dentro do pipeline** (imputação, padronização e codificação), ajustado só com os dados de treino de cada etapa.
+- **Comparação com duas regras sem aprendizado:** "repetir o resultado do mês anterior" e "época de safra (índice sazonal > 1)".
+
+| Modelo | Papel |
+|--------|-------|
+| Regra: repetir o mês anterior | Referência forte, explora a persistência da demanda |
+| Regra: época de safra | Referência sazonal |
+| Regressão logística | Modelo linear interpretável |
+| Random Forest | Conjunto de árvores, captura interações |
+| Gradient Boosting (HistGradientBoosting) | Árvores sequenciais, trata valores ausentes nativamente |
+
+**Métricas:** Accuracy, F1 (principal), precisão, recall e AUC no teste de 2024. Os resultados ficam em `reports/metricas_modelos.csv` e em `ml.metricas_modelos`; o notebook `03_modelo.ipynb` traz a matriz de confusão, a curva ROC, o desempenho por produto e por mês, a importância das features e a análise de onde vem o ganho do modelo.
+
+![Comparação dos modelos no teste de 2024](reports/figuras/14_comparacao_modelos.png)
+
+O modelo final é salvo em `models/modelo_alta_demanda.pkl` com o pipeline completo e os metadados (features, parâmetros, período de treino, métricas e versão do scikit-learn).
+
 ## Como executar
 
 Pré-requisitos: Python 3.10+, Git e PostgreSQL (testado nas versões 16 e 18).
@@ -256,6 +286,14 @@ python -m src.build_features   # gera ml.features_demanda e data/processed/featu
 
 Depois execute `notebooks/02_features.ipynb`, que documenta as features, roda o teste de vazamento e confere a base gravada.
 
+Etapa 6:
+
+```powershell
+python -m src.train            # treina, compara, salva o modelo e grava métricas e previsões
+```
+
+Depois execute `notebooks/03_modelo.ipynb` para a análise completa dos resultados.
+
 Os arquivos do IBGE ficam em cache em `data/raw/`; para baixar de novo, use `python -m src.extract --force`. Para recriar as tabelas do zero, use `python -m src.setup_db --recriar`.
 
 Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
@@ -274,5 +312,5 @@ Para conferir a carga no SQL Shell (psql), a partir da pasta do projeto:
 - [x] Etapa 3: ETL em Python (staging → modelo dimensional)
 - [x] Etapa 4: análise exploratória (notebook)
 - [x] Etapa 5: engenharia de features
-- [ ] Etapa 6: modelo de classificação e métricas
+- [x] Etapa 6: modelo de classificação e métricas
 - [ ] Etapa 7: documentação final e notebook de entrega

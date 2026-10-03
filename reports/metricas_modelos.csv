@@ -1,0 +1,6 @@
+modelo,tipo,f1_validacao,melhores_parametros,accuracy,f1,precisao,recall,auc
+Regra: repetir o mês anterior,referência,0.7537,-,0.7368,0.7327,0.7312,0.7343,0.7368
+Regra: época de safra (índice sazonal > 1),referência,0.7665,-,0.7173,0.7066,0.7209,0.6928,0.7952
+Regressão logística,aprendizado de máquina,0.7965,C=10.0,0.7736,0.7719,0.7644,0.7794,0.8611
+Random Forest,aprendizado de máquina,0.7755,"max_depth=None, min_samples_leaf=5",0.7748,0.7729,0.7662,0.7797,0.858
+Gradient Boosting,aprendizado de máquina,0.796,"learning_rate=0.03, max_leaf_nodes=15",0.7706,0.7687,0.7617,0.7759,0.8584

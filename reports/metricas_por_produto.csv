@@ -1,0 +1,4 @@
+nome,registros,f1_modelo,f1_regra_mes_anterior,accuracy_modelo
+Açaí,2664,0.8335,0.767,0.8431
+Castanha-do-pará,2664,0.7792,0.7449,0.7725
+Óleo de copaíba,2662,0.7065,0.6858,0.7051
